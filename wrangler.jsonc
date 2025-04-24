@@ -17,8 +17,8 @@
 	"durable_objects": {
 		"bindings": [
 			{
-				"name": "Chat",
-				"class_name": "Chat"
+				"name": "AGENT_TRAFFIC_STRATEGY",
+				"class_name": "AgentTrafficStrategy"
 			}
 		]
 	},
@@ -26,7 +26,7 @@
 		{
 			"tag": "v1",
 			"new_sqlite_classes": [
-				"Chat"
+				"AgentTrafficStrategy"
 			]
 		}
 	],

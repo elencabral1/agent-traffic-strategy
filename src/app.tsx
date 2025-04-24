@@ -66,7 +66,7 @@ export default function Chat() {
   };
 
   const agent = useAgent({
-    agent: "chat",
+    agent: "AgentTrafficStrategy",
   });
 
   const {

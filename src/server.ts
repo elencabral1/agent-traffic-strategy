@@ -23,11 +23,11 @@ const model = openai("gpt-4o-2024-11-20");
 // });
 
 // we use ALS to expose the agent context to the tools
-export const agentContext = new AsyncLocalStorage<Chat>();
+export const agentContext = new AsyncLocalStorage<AgentTrafficStrategy>();
 /**
  * Chat Agent implementation that handles real-time AI chat interactions
  */
-export class Chat extends AIChatAgent<Env> {
+export class AgentTrafficStrategy extends AIChatAgent<Env> {
   /**
    * Handles incoming chat messages and manages the response stream
    * @param onFinish - Callback function executed when streaming completes
