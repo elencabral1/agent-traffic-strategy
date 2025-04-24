@@ -2,7 +2,7 @@
  * Tool definitions for the AI chat agent
  * Tools can either require human confirmation or execute automatically
  */
-import { tool } from "ai";
+import { streamText, tool } from "ai";
 import { z } from "zod";
 
 import { agentContext } from "./server";
@@ -10,6 +10,7 @@ import {
   unstable_getSchedulePrompt,
   unstable_scheduleSchema,
 } from "agents/schedule";
+import { openai } from "@ai-sdk/openai";
 
 /**
  * Weather information tool that requires human confirmation
@@ -20,6 +21,11 @@ const getWeatherInformation = tool({
   description: "show the weather in a given city to the user",
   parameters: z.object({ city: z.string() }),
   // Omitting execute function makes this tool require human confirmation
+});
+
+const getPaidTrafficStrategy = tool({
+  description: "generates a complete paid traffic structure",
+  parameters: z.object({ prompt: z.string() }),
 });
 
 /**
@@ -124,6 +130,7 @@ const cancelScheduledTask = tool({
  */
 export const tools = {
   getWeatherInformation,
+  getPaidTrafficStrategy,
   getLocalTime,
   scheduleTask,
   getScheduledTasks,
@@ -140,4 +147,29 @@ export const executions = {
     console.log(`Getting weather information for ${city}`);
     return `The weather in ${city} is sunny`;
   },
+  getPaidTrafficStrategy: async ({ prompt }: { prompt: string }) => {
+    const result = streamText({
+      model: openai("gpt-4o-mini"),
+      system: `Você é um especialista em tráfego pago. Gere uma estratégia completa de mídia paga para o seguinte objetivo:
+
+"${prompt}"
+
+A estratégia deve conter:
+- Canais (Facebook Ads, Google Ads, etc)
+- Segmentação de público
+- Orçamento estimado
+- Cronograma
+- KPIs
+- Diagrama em formato Mermaid
+
+Formato da resposta:
+1. Estratégia detalhada em texto
+2. Diagrama Mermaid (bloco separado)
+`,
+      prompt: `Crie uma estratégia completa para: ${prompt}`
+    });
+    await result.consumeStream();
+    const text = await result.text;
+    return text;
+  }
 };
