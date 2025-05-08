@@ -125,11 +125,10 @@ describe("getPaidTrafficStrategy tool with human confirmation", () => {
     });
 
     expect(mockExecutions.getPaidTrafficStrategy).toHaveBeenCalled();
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: "tool_result",
-      })
-    );
+    expect(spy).toHaveBeenCalled();
+    const callArg = spy.mock.calls[0][0];
+    expect(callArg).toContain('"toolCallId"');
+    expect(callArg).toContain('"result":"Estrategia pronta"');
   });
 
   it("should not execute when user rejects", async () => {
@@ -185,10 +184,9 @@ describe("getPaidTrafficStrategy tool with human confirmation", () => {
     });
 
     expect(mockExecutions.getPaidTrafficStrategy).not.toHaveBeenCalled();
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: "tool_result",
-      })
-    );
+    expect(spy).toHaveBeenCalled();
+    const callArg = spy.mock.calls[0][0];
+    expect(callArg).toContain('"toolCallId"');
+    expect(callArg).toContain('"result":"Error: User denied access to tool execution"');
   });
 });

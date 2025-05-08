@@ -66,14 +66,14 @@ export async function processToolCalls<
       if (!(toolName in executions) || toolInvocation.state !== "result")
         return part;
 
+      const rawResult = String(toolInvocation.result).trim();
+      const normalized = rawResult.toLowerCase();
+
       let result: unknown;
 
-      if (toolInvocation.result === APPROVAL.YES) {
-        // Get the tool and check if the tool has an execute function.
-        if (
-          !isValidToolName(toolName, executions) ||
-          toolInvocation.state !== "result"
-        ) {
+      if (normalized === "yes" || rawResult === APPROVAL.YES) {
+        // Execute on user confirmation
+        if (!isValidToolName(toolName, executions)) {
           return part;
         }
 
@@ -86,7 +86,7 @@ export async function processToolCalls<
         } else {
           result = "Error: No execute function found on tool";
         }
-      } else if (toolInvocation.result === APPROVAL.NO) {
+      } else if (normalized === "no" || rawResult === APPROVAL.NO) {
         result = "Error: User denied access to tool execution";
       } else {
         // For any unhandled responses, return the original part.
